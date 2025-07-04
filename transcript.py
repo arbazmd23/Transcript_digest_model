@@ -83,13 +83,12 @@ Transcript:
     
     data = response.json()
     try:
-        # Extract the actual text and parse the JSON from it
+        # Extract the actual text from Claude's response
         raw_text = data["content"][0]["text"]
-        result_json = json.loads(raw_text)
-        return result_json
+        return {"raw_output": raw_text}
     except Exception as e:
         return {
-            "error": "Failed to parse Claude response",
+            "error": "Failed to extract Claude response",
             "exception": str(e),
             "raw_response": data
         }
@@ -135,9 +134,10 @@ def main():
                 else:
                     st.success("✅ Analysis complete!")
                     
-                    # Display JSON output only
+                    # Display raw output from Claude
                     st.subheader("📊 Analysis Results")
-                    st.json(result)
+                    if "raw_output" in result:
+                        st.code(result["raw_output"], language="json")
                         
         except Exception as e:
             st.error(f"Failed to process transcript: {str(e)}")

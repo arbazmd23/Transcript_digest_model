@@ -135,21 +135,9 @@ def main():
                 else:
                     st.success("✅ Analysis complete!")
                     
-                    # Display insights
-                    if "insights" in result:
-                        st.subheader("💡 Key Insights")
-                        for i, insight in enumerate(result["insights"], 1):
-                            st.write(f"**{i}.** {insight}")
-                    
-                    # Display quotes
-                    if "quotes" in result:
-                        st.subheader("💬 Key Quotes")
-                        for quote in result["quotes"]:
-                            st.markdown(f"**[{quote['timestamp']}]** *\"{quote['quote']}\"*")
-                    
-                    # Show raw JSON
-                    with st.expander("📊 Raw JSON Response"):
-                        st.json(result)
+                    # Display JSON output only
+                    st.subheader("📊 Analysis Results")
+                    st.json(result)
                         
         except Exception as e:
             st.error(f"Failed to process transcript: {str(e)}")

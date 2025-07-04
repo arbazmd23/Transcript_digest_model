@@ -83,13 +83,13 @@ Transcript:
     
     data = response.json()
     try:
-        # Extract the actual text content from Claude's response
+        # Extract the actual text and parse the JSON from it
         raw_text = data["content"][0]["text"]
-        # Return the raw text directly - let Streamlit handle the display
-        return {"success": True, "raw_response": raw_text}
+        result_json = json.loads(raw_text)
+        return result_json
     except Exception as e:
         return {
-            "error": "Failed to extract Claude response",
+            "error": "Failed to parse Claude response",
             "exception": str(e),
             "raw_response": data
         }
@@ -135,10 +135,21 @@ def main():
                 else:
                     st.success("✅ Analysis complete!")
                     
-                    # Display raw JSON output from Claude
-                    st.subheader("📊 Analysis Results")
-                    # Display the raw response as code block to preserve JSON formatting
-                    st.code(result["raw_response"], language="json")
+                    # Display insights
+                    if "insights" in result:
+                        st.subheader("💡 Key Insights")
+                        for i, insight in enumerate(result["insights"], 1):
+                            st.write(f"**{i}.** {insight}")
+                    
+                    # Display quotes
+                    if "quotes" in result:
+                        st.subheader("💬 Key Quotes")
+                        for quote in result["quotes"]:
+                            st.markdown(f"**[{quote['timestamp']}]** *\"{quote['quote']}\"*")
+                    
+                    # Show raw JSON
+                    with st.expander("📊 Raw JSON Response"):
+                        st.json(result)
                         
         except Exception as e:
             st.error(f"Failed to process transcript: {str(e)}")
